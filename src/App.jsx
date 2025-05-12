@@ -51,7 +51,7 @@ function Modelo() {
   };
 
   const handleImageClick = () => {
-    window.location.href = "https://www.youtube.com/watch?v=03jFmQ2ypv8";
+    window.location.href = "https://www.youtube.com/watch?v=zoQgXoQMCHc";
   };
 
   const toggleLuz = () => {
