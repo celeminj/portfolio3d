@@ -11,7 +11,7 @@ function Modelo() {
   const discoSade = useLoader(FBXLoader, '/source/Sade.fbx');
   const discoPinkFloyd = useLoader(FBXLoader, '/source/PinkFloyd.fbx');
 
-  const texture = useLoader(TextureLoader, '/textures/sssssss.png');
+  const texture = useLoader(TextureLoader, '/textures/gris.jpg');
   const texture2 = useLoader(TextureLoader, '/textures/frank.jpg');
   const texture3 = useLoader(TextureLoader, '/textures/hector.png');
   const textureSade = useLoader(TextureLoader, '/textures/sade.jpg');
