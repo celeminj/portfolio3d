@@ -1,21 +1,24 @@
 import React, { Suspense, useEffect, useRef, useState } from 'react';
-import { Canvas, useLoader } from '@react-three/fiber';
+import { Canvas, useLoader, useFrame } from '@react-three/fiber';
 import { TextureLoader } from 'three';
 import { OrbitControls, Html } from '@react-three/drei';
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
-import { gsap } from 'gsap';
+import * as THREE from 'three';
+
 function Modelo() {
   const fbx = useLoader(FBXLoader, '/source/Home.fbx');
   const fbxpc = useLoader(FBXLoader, '/source/pc.fbx');
   const cuadro = useLoader(FBXLoader, '/source/cuadro1.fbx');
-  const discoSade = useLoader(FBXLoader, '/source/Sade.fbx');
-  const discoPinkFloyd = useLoader(FBXLoader, '/source/PinkFloyd.fbx');
+  const discoSade = useLoader(FBXLoader, '/source/disco1.fbx');
+  const discoPinkFloyd = useLoader(FBXLoader, '/source/disco2.fbx');
+  const github = useLoader(FBXLoader, '/source/github.fbx');
 
   const texture = useLoader(TextureLoader, '/textures/gris.jpg');
   const texture2 = useLoader(TextureLoader, '/textures/frank.jpg');
   const texture3 = useLoader(TextureLoader, '/textures/hector.png');
   const textureSade = useLoader(TextureLoader, '/textures/sade.jpg');
   const texturePinkFloyd = useLoader(TextureLoader, '/textures/pink.jpg');
+  const textureGithub = useLoader(TextureLoader, '/textures/github.png');
 
   const [hovered, setHovered] = useState(false);
   const [luzEncendida, setLuzEncendida] = useState(true);
@@ -27,19 +30,8 @@ function Modelo() {
   const [showPopupPinkFloyd, setShowPopupPinkFloyd] = useState(false);
   const [audioPinkFloyd] = useState(new Audio('/song/money.mp3'));
 
-  // Refs para los discos
   const sadeRef = useRef();
   const pinkFloydRef = useRef();
-
-  // Estado para el arrastre (Sade)
-  const [isDraggingSade, setIsDraggingSade] = useState(false);
-  const [rotationYSade, setRotationYSade] = useState(0);
-  const [startXSade, setStartXSade] = useState(null);
-
-  // Estado para el arrastre (Pink Floyd)
-  const [isDraggingPF, setIsDraggingPF] = useState(false);
-  const [rotationYPF, setRotationYPF] = useState(0);
-  const [startXPF, setStartXPF] = useState(null);
 
   useEffect(() => {
     fbx.traverse((child) => {
@@ -48,59 +40,60 @@ function Modelo() {
         child.material.needsUpdate = true;
       }
     });
-  }, [fbx, texture]);
-
-  useEffect(() => {
     fbxpc.traverse((child) => {
       if (child.isMesh) {
         child.material.map = texture2;
         child.material.needsUpdate = true;
       }
     });
-  }, [fbxpc, texture2]);
-
-  useEffect(() => {
     cuadro.traverse((child) => {
       if (child.isMesh) {
         child.material.map = texture3;
         child.material.needsUpdate = true;
       }
     });
-  }, [cuadro, texture3]);
-
-  useEffect(() => {
     discoSade.traverse((child) => {
       if (child.isMesh) {
         child.material.map = textureSade;
         child.material.needsUpdate = true;
       }
     });
-  }, [discoSade, textureSade]);
-
-  useEffect(() => {
     discoPinkFloyd.traverse((child) => {
       if (child.isMesh) {
         child.material.map = texturePinkFloyd;
         child.material.needsUpdate = true;
       }
     });
-  }, [discoPinkFloyd, texturePinkFloyd]);
+
+   
+
+    github.traverse((child) => {
+      if (child.isMesh) {
+        child.material.map = textureGithub;
+        child.material.emissive = new THREE.Color(0x000000); // Luz negra
+        child.material.emissiveIntensity = 1;
+        child.material.needsUpdate = true;
+      }
+    });
+  }, [
+    fbx, fbxpc, cuadro, discoSade, discoPinkFloyd, github,
+    texture, texture2, texture3, textureSade, texturePinkFloyd, textureGithub
+  ]);
+
+  useFrame(() => {
+    if (github) {
+      github.traverse((child) => {
+        if (child.isMesh && child.material?.emissiveIntensity !== undefined) {
+          const pulse = 0.5 + Math.sin(Date.now() * 0.005) * 0.5;
+          child.material.emissiveIntensity = pulse;
+        }
+      });
+    }
+  });
 
   useEffect(() => {
     document.body.style.cursor = hovered ? 'pointer' : 'default';
   }, [hovered]);
-
-  useEffect(() => {
-    if (sadeRef.current) {
-      sadeRef.current.rotation.y = rotationYSade;
-    }
-  }, [rotationYSade]);
-
-  useEffect(() => {
-    if (pinkFloydRef.current) {
-      pinkFloydRef.current.rotation.y = rotationYPF;
-    }
-  }, [rotationYPF]);
 
   const handleDiscoSadeClick = () => {
     setShowPopupSade(true);
@@ -113,20 +106,10 @@ function Modelo() {
     audioSade.currentTime = 0;
   };
 
-const handleDiscoPinkFloydClick = () => {
-  setShowPopupPinkFloyd(true);
-  audioPinkFloyd.play();
-
-  gsap.to(pinkFloydRef.current, {
-    rotationY: "+=" + Math.PI * 2, // Una vuelta completa
-    duration: 1,
-    ease: "power2.out",
-    onUpdate: () => {
-      pinkFloydRef.current.rotation.y = pinkFloydRef.current.rotationY;
-    }
-  });
-};
-
+  const handleDiscoPinkFloydClick = () => {
+    setShowPopupPinkFloyd(true);
+    audioPinkFloyd.play();
+  };
 
   const closePopupPinkFloyd = () => {
     setShowPopupPinkFloyd(false);
@@ -134,13 +117,8 @@ const handleDiscoPinkFloydClick = () => {
     audioPinkFloyd.currentTime = 0;
   };
 
-  const toggleLuz = () => {
-    setLuzEncendida((prev) => !prev);
-  };
-
-  const toggleLuzSecundaria = () => {
-    setLuzSecundariaEncendida((prev) => !prev);
-  };
+  const toggleLuz = () => setLuzEncendida((prev) => !prev);
+  const toggleLuzSecundaria = () => setLuzSecundariaEncendida((prev) => !prev);
 
   const posicionLuzPrincipal = [0.75, 0.78, -0.72];
   const posicionLuzSecundaria = [0.78, 0.78, 0.92];
@@ -149,27 +127,33 @@ const handleDiscoPinkFloydClick = () => {
     <>
       <primitive object={fbx} scale={0.01} />
       <primitive object={fbxpc} scale={0.01} position={[0, 0, 1]} />
-      <primitive object={cuadro} scale={0.01} position={[0, 0, 2]} />
+      <primitive object={cuadro} scale={0.01} position={[1.8, -0.28, 1.9]} />
 
-      {/* Disco Sade */}
       <primitive
         ref={sadeRef}
         object={discoSade}
         scale={0.01}
-        position={[0, 0, 3]}
+        position={[0, 0, 0]}
         onClick={handleDiscoSadeClick}
       />
 
-      {/* Disco Pink Floyd */}
       <primitive
         ref={pinkFloydRef}
         object={discoPinkFloyd}
         scale={0.01}
-        position={[2, 0, 3]}
+        position={[0, 0, 0]}
         onClick={handleDiscoPinkFloydClick}
       />
 
-      {/* Luz principal */}
+      <primitive
+        object={github}
+        scale={0.01}
+        position={[0, 0, 0]}
+        onClick={() => window.open('https://github.com/celeminj', '_blank')}
+        onPointerOver={() => setHovered(true)}
+        onPointerOut={() => setHovered(false)}
+      />
+
       {luzEncendida && (
         <pointLight
           position={posicionLuzPrincipal}
@@ -180,7 +164,6 @@ const handleDiscoPinkFloydClick = () => {
         />
       )}
 
-      {/* Luz secundaria */}
       {luzSecundariaEncendida && (
         <pointLight
           position={posicionLuzSecundaria}
@@ -191,7 +174,6 @@ const handleDiscoPinkFloydClick = () => {
         />
       )}
 
-      {/* Bombilla principal */}
       <mesh
         position={posicionLuzPrincipal}
         onClick={toggleLuz}
@@ -206,7 +188,6 @@ const handleDiscoPinkFloydClick = () => {
         />
       </mesh>
 
-      {/* Bombilla secundaria */}
       <mesh
         position={posicionLuzSecundaria}
         onClick={toggleLuzSecundaria}
@@ -221,9 +202,8 @@ const handleDiscoPinkFloydClick = () => {
         />
       </mesh>
 
-      {/* Popup Sade */}
       {showPopupSade && (
-        <Html position={[0, 1.5, 3]}>
+        <Html position={[2, 2, 0]}>
           <div style={popupHtmlStyle}>
             <h2>🎶 Reproduciendo Sade</h2>
             <button onClick={closePopupSade} style={buttonStyle}>Cerrar</button>
@@ -231,9 +211,8 @@ const handleDiscoPinkFloydClick = () => {
         </Html>
       )}
 
-      {/* Popup Pink Floyd */}
       {showPopupPinkFloyd && (
-        <Html position={[2, 1.5, 3]}>
+        <Html position={[2, 2.5, 0]}>
           <div style={popupHtmlStyle}>
             <h2>🎸 Reproduciendo Pink Floyd</h2>
             <button onClick={closePopupPinkFloyd} style={buttonStyle}>Cerrar</button>
@@ -244,7 +223,6 @@ const handleDiscoPinkFloydClick = () => {
   );
 }
 
-// Estilos para los popups y botones
 const popupHtmlStyle = {
   background: 'rgba(0,0,0,0.85)',
   padding: '20px',
