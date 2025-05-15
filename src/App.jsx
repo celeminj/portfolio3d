@@ -12,6 +12,7 @@ function Modelo() {
   const discoSade = useLoader(FBXLoader, '/source/disco1.fbx');
   const discoPinkFloyd = useLoader(FBXLoader, '/source/disco2.fbx');
   const github = useLoader(FBXLoader, '/source/github.fbx');
+  const pc = useLoader(FBXLoader, '/source/ordenador.fbx');
 
   const texture = useLoader(TextureLoader, '/textures/gris.jpg');
   const texture2 = useLoader(TextureLoader, '/textures/frank.jpg');
@@ -19,7 +20,7 @@ function Modelo() {
   const textureSade = useLoader(TextureLoader, '/textures/sade.jpg');
   const texturePinkFloyd = useLoader(TextureLoader, '/textures/pink.jpg');
   const textureGithub = useLoader(TextureLoader, '/textures/github.png');
-
+  const texturePC = useLoader(TextureLoader, '/textures/filmo.png');
   const [hovered, setHovered] = useState(false);
   const [luzEncendida, setLuzEncendida] = useState(true);
   const [luzSecundariaEncendida, setLuzSecundariaEncendida] = useState(true);
@@ -64,7 +65,12 @@ function Modelo() {
         child.material.needsUpdate = true;
       }
     });
-
+ pc.traverse((child) => {
+      if (child.isMesh) {
+        child.material.map = texturePC;
+        child.material.needsUpdate = true;
+      }
+    });
    
 
     github.traverse((child) => {
@@ -76,8 +82,8 @@ function Modelo() {
       }
     });
   }, [
-    fbx, fbxpc, cuadro, discoSade, discoPinkFloyd, github,
-    texture, texture2, texture3, textureSade, texturePinkFloyd, textureGithub
+    fbx, fbxpc, cuadro, discoSade, discoPinkFloyd, github, pc,
+    texture, texture2, texture3, textureSade, texturePinkFloyd, textureGithub, texturePC,
   ]);
 
   useFrame(() => {
@@ -128,7 +134,15 @@ function Modelo() {
       <primitive object={fbx} scale={0.01} />
       <primitive object={fbxpc} scale={0.01} position={[0, 0, 1]} />
       <primitive object={cuadro} scale={0.01} position={[1.8, -0.28, 1.9]} />
-
+        
+        <primitive
+        object={pc}
+        scale={0.01}
+        position={[0, 0, 0]}
+        onClick={() => window.open('http://filmo.celemin.me/public/cartelera', '_blank')}
+        onPointerOver={() => setHovered(true)}
+        onPointerOut={() => setHovered(false)}
+      />
       <primitive
         ref={sadeRef}
         object={discoSade}
