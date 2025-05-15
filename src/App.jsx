@@ -1,19 +1,38 @@
-import React, { Suspense, useEffect, useState } from 'react';
-import { Canvas, useLoader } from '@react-three/fiber';
+import React, { Suspense, useEffect, useRef, useState } from 'react';
+import { Canvas, useLoader, useFrame } from '@react-three/fiber';
 import { TextureLoader } from 'three';
-import { OrbitControls } from '@react-three/drei';
+import { OrbitControls, Html } from '@react-three/drei';
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
+import * as THREE from 'three';
 
 function Modelo() {
   const fbx = useLoader(FBXLoader, '/source/Home.fbx');
   const fbxpc = useLoader(FBXLoader, '/source/pc.fbx');
   const cuadro = useLoader(FBXLoader, '/source/cuadro1.fbx');
-  const texture = useLoader(TextureLoader, '/textures/sssssss.png');
+  const discoSade = useLoader(FBXLoader, '/source/disco1.fbx');
+  const discoPinkFloyd = useLoader(FBXLoader, '/source/disco2.fbx');
+  const github = useLoader(FBXLoader, '/source/github.fbx');
+  const pc = useLoader(FBXLoader, '/source/ordenador.fbx');
+
+  const texture = useLoader(TextureLoader, '/textures/gris.jpg');
   const texture2 = useLoader(TextureLoader, '/textures/frank.jpg');
   const texture3 = useLoader(TextureLoader, '/textures/hector.png');
-
+  const textureSade = useLoader(TextureLoader, '/textures/sade.jpg');
+  const texturePinkFloyd = useLoader(TextureLoader, '/textures/pink.jpg');
+  const textureGithub = useLoader(TextureLoader, '/textures/github.png');
+  const texturePC = useLoader(TextureLoader, '/textures/filmo.png');
   const [hovered, setHovered] = useState(false);
-  const [luzEncendida, setLuzEncendida] = useState(true); // 🔘 estado de la luz
+  const [luzEncendida, setLuzEncendida] = useState(true);
+  const [luzSecundariaEncendida, setLuzSecundariaEncendida] = useState(true);
+
+  const [showPopupSade, setShowPopupSade] = useState(false);
+  const [audioSade] = useState(new Audio('/song/sade.mp3'));
+
+  const [showPopupPinkFloyd, setShowPopupPinkFloyd] = useState(false);
+  const [audioPinkFloyd] = useState(new Audio('/song/money.mp3'));
+
+  const sadeRef = useRef();
+  const pinkFloydRef = useRef();
 
   useEffect(() => {
     fbx.traverse((child) => {
@@ -22,68 +41,136 @@ function Modelo() {
         child.material.needsUpdate = true;
       }
     });
-  }, [fbx, texture]);
-
-  useEffect(() => {
     fbxpc.traverse((child) => {
       if (child.isMesh) {
         child.material.map = texture2;
         child.material.needsUpdate = true;
       }
     });
-  }, [fbxpc, texture2]);
-
-  useEffect(() => {
     cuadro.traverse((child) => {
       if (child.isMesh) {
         child.material.map = texture3;
         child.material.needsUpdate = true;
       }
     });
-  }, [cuadro, texture3]);
+    discoSade.traverse((child) => {
+      if (child.isMesh) {
+        child.material.map = textureSade;
+        child.material.needsUpdate = true;
+      }
+    });
+    discoPinkFloyd.traverse((child) => {
+      if (child.isMesh) {
+        child.material.map = texturePinkFloyd;
+        child.material.needsUpdate = true;
+      }
+    });
+ pc.traverse((child) => {
+      if (child.isMesh) {
+        child.material.map = texturePC;
+        child.material.needsUpdate = true;
+      }
+    });
+   
+
+    github.traverse((child) => {
+      if (child.isMesh) {
+        child.material.map = textureGithub;
+        child.material.emissive = new THREE.Color(0x000000); // Luz negra
+        child.material.emissiveIntensity = 1;
+        child.material.needsUpdate = true;
+      }
+    });
+  }, [
+    fbx, fbxpc, cuadro, discoSade, discoPinkFloyd, github, pc,
+    texture, texture2, texture3, textureSade, texturePinkFloyd, textureGithub, texturePC,
+  ]);
+
+  useFrame(() => {
+    if (github) {
+      github.traverse((child) => {
+        if (child.isMesh && child.material?.emissiveIntensity !== undefined) {
+          const pulse = 0.5 + Math.sin(Date.now() * 0.005) * 0.5;
+          child.material.emissiveIntensity = pulse;
+        }
+      });
+    }
+  });
 
   useEffect(() => {
     document.body.style.cursor = hovered ? 'pointer' : 'default';
   }, [hovered]);
 
-  const handlePcClick = () => {
-    window.location.href = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
+  const handleDiscoSadeClick = () => {
+    setShowPopupSade(true);
+    audioSade.play();
   };
 
-  const handleImageClick = () => {
-    window.location.href = "https://www.youtube.com/watch?v=zoQgXoQMCHc";
+  const closePopupSade = () => {
+    setShowPopupSade(false);
+    audioSade.pause();
+    audioSade.currentTime = 0;
   };
 
-  const toggleLuz = () => {
-    setLuzEncendida((prev) => !prev);
+  const handleDiscoPinkFloydClick = () => {
+    setShowPopupPinkFloyd(true);
+    audioPinkFloyd.play();
   };
 
-  const posicionLuz = [0.75, 0.78, -0.72]; // Ajusta según la ubicación de la lámpara
+  const closePopupPinkFloyd = () => {
+    setShowPopupPinkFloyd(false);
+    audioPinkFloyd.pause();
+    audioPinkFloyd.currentTime = 0;
+  };
+
+  const toggleLuz = () => setLuzEncendida((prev) => !prev);
+  const toggleLuzSecundaria = () => setLuzSecundariaEncendida((prev) => !prev);
+
+  const posicionLuzPrincipal = [0.75, 0.78, -0.72];
+  const posicionLuzSecundaria = [0.78, 0.78, 0.92];
 
   return (
     <>
       <primitive object={fbx} scale={0.01} />
-      <primitive
-        object={fbxpc}
+      <primitive object={fbxpc} scale={0.01} position={[0, 0, 1]} />
+      <primitive object={cuadro} scale={0.01} position={[1.8, -0.28, 1.9]} />
+        
+        <primitive
+        object={pc}
         scale={0.01}
-        position={[0, 0, 1]}
-        onClick={handlePcClick}
+        position={[0, 0, 0]}
+        onClick={() => window.open('http://filmo.celemin.me/public/cartelera', '_blank')}
         onPointerOver={() => setHovered(true)}
         onPointerOut={() => setHovered(false)}
       />
       <primitive
-        object={cuadro}
+        ref={sadeRef}
+        object={discoSade}
         scale={0.01}
-        position={[0, 0, 2]}
-        onClick={handleImageClick}
+        position={[0, 0, 0]}
+        onClick={handleDiscoSadeClick}
+      />
+
+      <primitive
+        ref={pinkFloydRef}
+        object={discoPinkFloyd}
+        scale={0.01}
+        position={[0, 0, 0]}
+        onClick={handleDiscoPinkFloydClick}
+      />
+
+      <primitive
+        object={github}
+        scale={0.01}
+        position={[0, 0, 0]}
+        onClick={() => window.open('https://github.com/celeminj', '_blank')}
         onPointerOver={() => setHovered(true)}
         onPointerOut={() => setHovered(false)}
       />
 
-      {/* Luz que se enciende o apaga con clic */}
       {luzEncendida && (
         <pointLight
-          position={posicionLuz}
+          position={posicionLuzPrincipal}
           intensity={0.9}
           distance={2}
           decay={2}
@@ -91,9 +178,18 @@ function Modelo() {
         />
       )}
 
-      {/* Bombilla interactiva */}
+      {luzSecundariaEncendida && (
+        <pointLight
+          position={posicionLuzSecundaria}
+          intensity={0.9}
+          distance={2}
+          decay={2}
+          color="white"
+        />
+      )}
+
       <mesh
-        position={posicionLuz}
+        position={posicionLuzPrincipal}
         onClick={toggleLuz}
         onPointerOver={() => setHovered(true)}
         onPointerOut={() => setHovered(false)}
@@ -105,9 +201,60 @@ function Modelo() {
           color={luzEncendida ? 'white' : 'gray'}
         />
       </mesh>
+
+      <mesh
+        position={posicionLuzSecundaria}
+        onClick={toggleLuzSecundaria}
+        onPointerOver={() => setHovered(true)}
+        onPointerOut={() => setHovered(false)}
+      >
+        <sphereGeometry args={[0.02, 16, 16]} />
+        <meshStandardMaterial
+          emissive={luzSecundariaEncendida ? 'white' : 'black'}
+          emissiveIntensity={luzSecundariaEncendida ? 1 : 0}
+          color={luzSecundariaEncendida ? 'white' : 'gray'}
+        />
+      </mesh>
+
+      {showPopupSade && (
+        <Html position={[2, 2, 0]}>
+          <div style={popupHtmlStyle}>
+            <h2>🎶 Reproduciendo Sade</h2>
+            <button onClick={closePopupSade} style={buttonStyle}>Cerrar</button>
+          </div>
+        </Html>
+      )}
+
+      {showPopupPinkFloyd && (
+        <Html position={[2, 2.5, 0]}>
+          <div style={popupHtmlStyle}>
+            <h2>🎸 Reproduciendo Pink Floyd</h2>
+            <button onClick={closePopupPinkFloyd} style={buttonStyle}>Cerrar</button>
+          </div>
+        </Html>
+      )}
     </>
   );
 }
+
+const popupHtmlStyle = {
+  background: 'rgba(0,0,0,0.85)',
+  padding: '20px',
+  borderRadius: '10px',
+  color: 'white',
+  textAlign: 'center',
+  minWidth: '200px',
+};
+
+const buttonStyle = {
+  marginTop: '10px',
+  padding: '8px 16px',
+  backgroundColor: '#ff4b4b',
+  border: 'none',
+  borderRadius: '5px',
+  color: 'white',
+  cursor: 'pointer',
+};
 
 function App() {
   return (
