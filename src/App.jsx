@@ -7,20 +7,23 @@ import * as THREE from 'three';
 
 function Modelo() {
   const fbx = useLoader(FBXLoader, '/source/Home.fbx');
-  const fbxpc = useLoader(FBXLoader, '/source/pc.fbx');
-  const cuadro = useLoader(FBXLoader, '/source/cuadro1.fbx');
+  const fbxpc = useLoader(FBXLoader, '/source/cuadro1.fbx');
+  const cuadro = useLoader(FBXLoader, '/source/cuadro2.fbx');
   const discoSade = useLoader(FBXLoader, '/source/disco1.fbx');
   const discoPinkFloyd = useLoader(FBXLoader, '/source/disco2.fbx');
   const github = useLoader(FBXLoader, '/source/github.fbx');
-  const pc = useLoader(FBXLoader, '/source/ordenador.fbx');
+  const pc = useLoader(FBXLoader, '/source/pc.fbx');
+  const linkedin = useLoader(FBXLoader, '/source/linkedin.fbx');
 
   const texture = useLoader(TextureLoader, '/textures/gris.jpg');
-  const texture2 = useLoader(TextureLoader, '/textures/frank.jpg');
+  const texture2 = useLoader(TextureLoader, '/textures/frank.png');
   const texture3 = useLoader(TextureLoader, '/textures/hector.png');
   const textureSade = useLoader(TextureLoader, '/textures/sade.jpg');
   const texturePinkFloyd = useLoader(TextureLoader, '/textures/pink.jpg');
   const textureGithub = useLoader(TextureLoader, '/textures/github.png');
   const texturePC = useLoader(TextureLoader, '/textures/filmo.png');
+  const textureLinkedin = useLoader(TextureLoader, '/textures/linkedin.png');
+
   const [hovered, setHovered] = useState(false);
   const [luzEncendida, setLuzEncendida] = useState(true);
   const [luzSecundariaEncendida, setLuzSecundariaEncendida] = useState(true);
@@ -65,18 +68,23 @@ function Modelo() {
         child.material.needsUpdate = true;
       }
     });
- pc.traverse((child) => {
-      if (child.isMesh) {
-        child.material.map = texturePC;
-        child.material.needsUpdate = true;
-      }
-    });
-   
-
-    github.traverse((child) => {
+  pc.traverse((child) => {
+        if (child.isMesh) {
+          child.material.map = texturePC;
+          child.material.needsUpdate = true;
+        }
+      });
+   github.traverse((child) => {
       if (child.isMesh) {
         child.material.map = textureGithub;
         child.material.emissive = new THREE.Color(0x000000); // Luz negra
+        child.material.emissiveIntensity = 1;
+        child.material.needsUpdate = true;
+      }
+    });
+     linkedin.traverse((child) => {
+      if (child.isMesh) {
+        child.material.map = textureLinkedin;
         child.material.emissiveIntensity = 1;
         child.material.needsUpdate = true;
       }
@@ -132,9 +140,16 @@ function Modelo() {
   return (
     <>
       <primitive object={fbx} scale={0.01} />
-      <primitive object={fbxpc} scale={0.01} position={[0, 0, 1]} />
-      <primitive object={cuadro} scale={0.01} position={[1.8, -0.28, 1.9]} />
-        
+      <primitive object={fbxpc} scale={0.01} position={[0, 0, 0]} />
+      <primitive object={cuadro} scale={0.01} position={[0, 0, 0]} />
+          <primitive
+        object={linkedin}
+        scale={0.01}
+        position={[0, 0, 0]}
+        onClick={() => window.open('https://es.linkedin.com/in/jordi-celem%C3%ADn', '_blank')}
+        onPointerOver={() => setHovered(true)}
+        onPointerOut={() => setHovered(false)}
+      />
         <primitive
         object={pc}
         scale={0.01}
