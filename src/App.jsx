@@ -6,7 +6,7 @@ import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
 import * as THREE from 'three';
 
 function Modelo() {
-  const fbx = useLoader(FBXLoader, '/source/Home.fbx');
+  const fbx = useLoader(FBXLoader, '/source/armario.fbx');
   const fbxpc = useLoader(FBXLoader, '/source/cuadro1.fbx');
   const cuadro = useLoader(FBXLoader, '/source/cuadro2.fbx');
   const discoSade = useLoader(FBXLoader, '/source/disco1.fbx');
@@ -14,8 +14,23 @@ function Modelo() {
   const github = useLoader(FBXLoader, '/source/github.fbx');
   const pc = useLoader(FBXLoader, '/source/pc.fbx');
   const linkedin = useLoader(FBXLoader, '/source/linkedin.fbx');
+  const poster = useLoader(FBXLoader, '/source/poster.fbx');
+  const switchs = useLoader(FBXLoader, '/source/sw.fbx');
+  const estanteria_alargada = useLoader(FBXLoader, '/source/estanteria_alargada.fbx');
+  const estanteria = useLoader(FBXLoader, '/source/estanterias.fbx');
+  const libro2 = useLoader(FBXLoader, '/source/librosql.fbx');
+  const librotumando = useLoader(FBXLoader, '/source/librotumado.fbx');
+  const mesa = useLoader(FBXLoader, '/source/mesa.fbx');
+  const parquet = useLoader(FBXLoader, '/source/parquet.fbx');
+  const silla = useLoader(FBXLoader, '/source/silla.fbx');
+  //const suelo_habitacion = useLoader(FBXLoader, '/source/suelo_habitacion.fbx');
+  const sueloyparedes = useLoader(FBXLoader, '/source/sueloyparedes.fbx');
+  const sugetar_estanteria = useLoader(FBXLoader, '/source/sugetar_estanteria.fbx');
+  const sujetar_poster = useLoader(FBXLoader, '/source/sujetar_poster.fbx');
+  const sw = useLoader(FBXLoader, '/source/sw.fbx');
+  const visualcodeicon = useLoader(FBXLoader, '/source/visualcodeicon.fbx');
 
-  const texture = useLoader(TextureLoader, '/textures/gris.jpg');
+  const texture = useLoader(TextureLoader, '/textures/textura_armario.png');
   const texture2 = useLoader(TextureLoader, '/textures/frank.png');
   const texture3 = useLoader(TextureLoader, '/textures/hector.png');
   const textureSade = useLoader(TextureLoader, '/textures/sade.jpg');
@@ -23,13 +38,23 @@ function Modelo() {
   const textureGithub = useLoader(TextureLoader, '/textures/github.png');
   const texturePC = useLoader(TextureLoader, '/textures/filmo.png');
   const textureLinkedin = useLoader(TextureLoader, '/textures/linkedin.png');
+  const texturePoster = useLoader(TextureLoader, '/textures/poster.png');
+  const parquet_texture = useLoader(TextureLoader, '/textures/parquet.png');
+  const posterTxt = useLoader(TextureLoader, '/textures/textura_poster.png');
+  const suelo_texture = useLoader(TextureLoader, '/textures/suelo_habitacion.png');
+  const textura_angular = useLoader(TextureLoader, '/textures/textura_angular.png');
+  const textura_armario = useLoader(TextureLoader, '/textures/textura_estanteria.png');
+  const textura_estanteria = useLoader(TextureLoader, '/textures/textura_estanteria.png');
+  const textura_mysql = useLoader(TextureLoader, '/textures/textura_mysql.png');
+  const textura_php = useLoader(TextureLoader, '/textures/textura_php.png');
 
+  
   const [hovered, setHovered] = useState(false);
   const [luzEncendida, setLuzEncendida] = useState(true);
   const [luzSecundariaEncendida, setLuzSecundariaEncendida] = useState(true);
 
   const [showPopupSade, setShowPopupSade] = useState(false);
-  const [audioSade] = useState(new Audio('/song/sade.mp3'));
+  const [audioSade] = useState(new Audio('/song/dire.mp3'));
 
   const [showPopupPinkFloyd, setShowPopupPinkFloyd] = useState(false);
   const [audioPinkFloyd] = useState(new Audio('/song/money.mp3'));
@@ -38,6 +63,23 @@ function Modelo() {
   const pinkFloydRef = useRef();
 
   useEffect(() => {
+    sueloyparedes.traverse((child) => {
+      if (child.isMesh) {
+        child.material.map = suelo_texture;
+        child.material.needsUpdate = true;
+      }
+    });
+    switchs.traverse((child) => {
+      if (child.isMesh) { 
+        child.material.needsUpdate = true;
+      }
+    });
+    poster.traverse((child) => {
+      if (child.isMesh) {
+        child.material.map = posterTxt;
+        child.material.needsUpdate = true;
+      }
+    });
     fbx.traverse((child) => {
       if (child.isMesh) {
         child.material.map = texture;
@@ -77,28 +119,80 @@ function Modelo() {
    github.traverse((child) => {
       if (child.isMesh) {
         child.material.map = textureGithub;
-        child.material.emissive = new THREE.Color(0x000000); // Luz negra
-        child.material.emissiveIntensity = 1;
+        child.material.emissive = new THREE.Color(808080); // Luz negra
+        child.material.emissiveIntensity = 2;
         child.material.needsUpdate = true;
       }
     });
-     linkedin.traverse((child) => {
+    linkedin.traverse((child) => {
+  if (child.isMesh) {
+    child.material.map = textureLinkedin;
+        child.material.emissive = new THREE.Color(808080); 
+    child.material.emissiveIntensity = 2;
+    child.material.needsUpdate = true;
+  }
+});
+fbx.traverse((child) => {
       if (child.isMesh) {
-        child.material.map = textureLinkedin;
-        child.material.emissiveIntensity = 1;
+        child.material.map = textura_armario;
         child.material.needsUpdate = true;
       }
     });
+    estanteria_alargada.traverse((child) => {
+      if (child.isMesh) {
+        child.material.map = textura_armario;
+        child.material.needsUpdate = true;
+      }
+    });
+    parquet.traverse((child) => {
+      if (child.isMesh) {
+        child.material.map = parquet_texture;
+        child.material.needsUpdate = true;
+      }
+    });
+    mesa.traverse((child) => {  
+      if (child.isMesh) {
+        child.material.map = textura_estanteria;
+        child.material.needsUpdate = true;
+      }
+    });
+    libro2.traverse((child) => {
+      if (child.isMesh) {
+        child.material.map = textura_mysql;
+        child.material.needsUpdate = true;
+      }
+    });
+    librotumando.traverse((child) => { 
+      if (child.isMesh) {
+        child.material.map = textura_php;
+        child.material.needsUpdate = true;
+      }
+    });
+    estanteria.traverse((child) => {
+      if (child.isMesh) {
+        child.material.map = textura_estanteria;
+        child.material.needsUpdate = true;
+      }
+    }
+    );
   }, [
-    fbx, fbxpc, cuadro, discoSade, discoPinkFloyd, github, pc,
-    texture, texture2, texture3, textureSade, texturePinkFloyd, textureGithub, texturePC,
+    fbx, fbxpc, cuadro, discoSade, discoPinkFloyd, github, pc, linkedin, poster,
+    texture, texture2, texture3, textureSade, texturePinkFloyd, textureGithub, texturePC, textureLinkedin, texturePoster
   ]);
 
   useFrame(() => {
     if (github) {
       github.traverse((child) => {
         if (child.isMesh && child.material?.emissiveIntensity !== undefined) {
-          const pulse = 0.5 + Math.sin(Date.now() * 0.005) * 0.5;
+          const pulse = 0.1 + Math.sin(Date.now() * 0.002) * 0.1;
+          child.material.emissiveIntensity = pulse;
+        }
+      });
+    } 
+    if (linkedin) {
+      linkedin.traverse((child) => {
+        if (child.isMesh && child.material?.emissiveIntensity !== undefined) {
+          const pulse = 0.1 + Math.sin(Date.now() * 0.002) * 0.1;
           child.material.emissiveIntensity = pulse;
         }
       });
@@ -137,12 +231,21 @@ function Modelo() {
   const posicionLuzPrincipal = [0.75, 0.78, -0.72];
   const posicionLuzSecundaria = [0.78, 0.78, 0.92];
 
+
   return (
     <>
       <primitive object={fbx} scale={0.01} />
       <primitive object={fbxpc} scale={0.01} position={[0, 0, 0]} />
       <primitive object={cuadro} scale={0.01} position={[0, 0, 0]} />
-          <primitive
+      <primitive
+        object={poster}
+        scale={0.01}
+        position={[0, 0, 0]}
+        onClick={() => window.open('http://projecto.oulin.me/Juegos/TresFuentes/TresFuentes/tresfuentes.html', '_blank')}
+        onPointerOver={() => setHovered(true)}
+        onPointerOut={() => setHovered(false)}
+      />
+      <primitive
         object={linkedin}
         scale={0.01}
         position={[0, 0, 0]}
@@ -150,7 +253,7 @@ function Modelo() {
         onPointerOver={() => setHovered(true)}
         onPointerOut={() => setHovered(false)}
       />
-        <primitive
+      <primitive
         object={pc}
         scale={0.01}
         position={[0, 0, 0]}
@@ -165,7 +268,12 @@ function Modelo() {
         position={[0, 0, 0]}
         onClick={handleDiscoSadeClick}
       />
-
+      <primitive
+        ref={switchs}
+        object={switchs}
+        scale={0.01}
+        position={[0, 0, 0]}
+      />
       <primitive
         ref={pinkFloydRef}
         object={discoPinkFloyd}
@@ -173,12 +281,34 @@ function Modelo() {
         position={[0, 0, 0]}
         onClick={handleDiscoPinkFloydClick}
       />
-
       <primitive
         object={github}
         scale={0.01}
         position={[0, 0, 0]}
         onClick={() => window.open('https://github.com/celeminj', '_blank')}
+        onPointerOver={() => setHovered(true)}
+        onPointerOut={() => setHovered(false)}
+      />
+
+      {/* Añado los FBX restantes aquí */}
+      <primitive object={estanteria_alargada} scale={0.01} position={[0, 0, 0]} />
+      <primitive object={estanteria} scale={0.01} position={[0, 0, 0]} />
+      <primitive object={libro2} scale={0.01} position={[0, 0, 0]} />
+      <primitive object={librotumando} scale={0.01} position={[0, 0, 0]} />
+      <primitive object={mesa} scale={0.01} position={[0, 0, 0]} />
+      <primitive object={parquet} scale={0.01} position={[0, 0, 0]} />
+      <primitive object={silla} scale={0.01} position={[0, 0, 0]} />
+      {/* <primitive object={suelo_habitacion} scale={0.01} position={[0, 0, 0]} /> */}
+      <primitive object={sueloyparedes} scale={0.01} position={[0, 0, 0]} />
+      <primitive object={sugetar_estanteria} scale={0.01} position={[0, 0, 0]} />
+      <primitive object={sujetar_poster} scale={0.01} position={[0, 0, 0]} />
+      <primitive object={sw} scale={0.01} position={[0, 0, 0]} />
+      
+      <primitive 
+        object={visualcodeicon} 
+        scale={0.01} 
+        position={[0, 0, 0]}
+        onClick={() => window.open('https://code.visualstudio.com/', '_blank')}
         onPointerOver={() => setHovered(true)}
         onPointerOut={() => setHovered(false)}
       />
@@ -234,7 +364,7 @@ function Modelo() {
       {showPopupSade && (
         <Html position={[2, 2, 0]}>
           <div style={popupHtmlStyle}>
-            <h2>🎶 Reproduciendo Sade</h2>
+            <h2>🎶 Reproduciendo Dire Straits</h2>
             <button onClick={closePopupSade} style={buttonStyle}>Cerrar</button>
           </div>
         </Html>
@@ -251,6 +381,8 @@ function Modelo() {
     </>
   );
 }
+
+// ... (el resto de tu código se mantiene igual)
 
 const popupHtmlStyle = {
   background: 'rgba(0,0,0,0.85)',
