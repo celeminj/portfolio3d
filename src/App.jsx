@@ -23,12 +23,13 @@ function Modelo() {
   const mesa = useLoader(FBXLoader, '/source/mesa.fbx');
   const parquet = useLoader(FBXLoader, '/source/parquet.fbx');
   const silla = useLoader(FBXLoader, '/source/silla.fbx');
-  //const suelo_habitacion = useLoader(FBXLoader, '/source/suelo_habitacion.fbx');
   const sueloyparedes = useLoader(FBXLoader, '/source/sueloyparedes.fbx');
   const sugetar_estanteria = useLoader(FBXLoader, '/source/sugetar_estanteria.fbx');
   const sujetar_poster = useLoader(FBXLoader, '/source/sujetar_poster.fbx');
   const sw = useLoader(FBXLoader, '/source/sw.fbx');
   const visualcodeicon = useLoader(FBXLoader, '/source/visualcodeicon.fbx');
+  const lampara = useLoader(FBXLoader, '/source/luces.fbx');
+
 
   const texture = useLoader(TextureLoader, '/textures/textura_armario.png');
   const texture2 = useLoader(TextureLoader, '/textures/frank.png');
@@ -47,8 +48,8 @@ function Modelo() {
   const textura_estanteria = useLoader(TextureLoader, '/textures/textura_estanteria.png');
   const textura_mysql = useLoader(TextureLoader, '/textures/textura_mysql.png');
   const textura_php = useLoader(TextureLoader, '/textures/textura_php.png');
-
-  
+  const gris = useLoader(TextureLoader, '/textures/gris.jpg');
+  const blue = useLoader(TextureLoader, '/textures/blue.jpg');
   const [hovered, setHovered] = useState(false);
   const [luzEncendida, setLuzEncendida] = useState(true);
   const [luzSecundariaEncendida, setLuzSecundariaEncendida] = useState(true);
@@ -63,6 +64,26 @@ function Modelo() {
   const pinkFloydRef = useRef();
 
   useEffect(() => {
+    visualcodeicon.traverse((child) => {
+      if (child.isMesh) {
+        child.material.map = blue;
+            child.material.emissive = new THREE.Color(808080); 
+        child.material.emissiveIntensity = 1;
+        child.material.needsUpdate = true;
+      }
+    });
+    lampara.traverse((child) => {
+      if (child.isMesh) {
+        child.material.map = gris;
+        child.material.needsUpdate = true;
+      }
+    });
+    sujetar_poster.traverse((child) => {
+      if (child.isMesh) {
+        child.material.map = gris;
+        child.material.needsUpdate = true;
+      }
+    });
     sueloyparedes.traverse((child) => {
       if (child.isMesh) {
         child.material.map = suelo_texture;
@@ -80,12 +101,7 @@ function Modelo() {
         child.material.needsUpdate = true;
       }
     });
-    fbx.traverse((child) => {
-      if (child.isMesh) {
-        child.material.map = texture;
-        child.material.needsUpdate = true;
-      }
-    });
+    
     fbxpc.traverse((child) => {
       if (child.isMesh) {
         child.material.map = texture2;
@@ -100,16 +116,21 @@ function Modelo() {
     });
     discoSade.traverse((child) => {
       if (child.isMesh) {
-        child.material.map = textureSade;
+          child.material = new THREE.MeshStandardMaterial({
+          map: textureSade
+        });
         child.material.needsUpdate = true;
       }
     });
-    discoPinkFloyd.traverse((child) => {
+   discoPinkFloyd.traverse((child) => {
       if (child.isMesh) {
-        child.material.map = texturePinkFloyd;
+        child.material = new THREE.MeshStandardMaterial({
+          map: texturePinkFloyd
+        });
         child.material.needsUpdate = true;
       }
     });
+
   pc.traverse((child) => {
         if (child.isMesh) {
           child.material.map = texturePC;
@@ -119,25 +140,25 @@ function Modelo() {
    github.traverse((child) => {
       if (child.isMesh) {
         child.material.map = textureGithub;
-        child.material.emissive = new THREE.Color(808080); // Luz negra
+        child.material.emissive = new THREE.Color(808080); 
         child.material.emissiveIntensity = 2;
         child.material.needsUpdate = true;
       }
     });
     linkedin.traverse((child) => {
-  if (child.isMesh) {
-    child.material.map = textureLinkedin;
-        child.material.emissive = new THREE.Color(808080); 
-    child.material.emissiveIntensity = 2;
-    child.material.needsUpdate = true;
-  }
-});
-fbx.traverse((child) => {
       if (child.isMesh) {
-        child.material.map = textura_armario;
+        child.material.map = textureLinkedin;
+            child.material.emissive = new THREE.Color(808080); 
+        child.material.emissiveIntensity = 2;
         child.material.needsUpdate = true;
       }
     });
+    fbx.traverse((child) => {
+          if (child.isMesh) {
+            child.material.map = textura_estanteria;
+            child.material.needsUpdate = true;
+          }
+        });
     estanteria_alargada.traverse((child) => {
       if (child.isMesh) {
         child.material.map = textura_armario;
@@ -176,7 +197,7 @@ fbx.traverse((child) => {
     }
     );
   }, [
-    fbx, fbxpc, cuadro, discoSade, discoPinkFloyd, github, pc, linkedin, poster,
+    fbx, fbxpc, cuadro, discoSade, discoPinkFloyd, github, pc, linkedin, poster, lampara,
     texture, texture2, texture3, textureSade, texturePinkFloyd, textureGithub, texturePC, textureLinkedin, texturePoster
   ]);
 
@@ -228,13 +249,14 @@ fbx.traverse((child) => {
   const toggleLuz = () => setLuzEncendida((prev) => !prev);
   const toggleLuzSecundaria = () => setLuzSecundariaEncendida((prev) => !prev);
 
-  const posicionLuzPrincipal = [0.75, 0.78, -0.72];
-  const posicionLuzSecundaria = [0.78, 0.78, 0.92];
+  const posicionLuzPrincipal = [2.75, 1.10, -0.15];
+  const posicionLuzSecundaria = [0.45, 1.1, -0.55];
 
 
   return (
     <>
       <primitive object={fbx} scale={0.01} />
+      <primitive object={lampara} scale={0.01} position={[0, 0, 0]} />
       <primitive object={fbxpc} scale={0.01} position={[0, 0, 0]} />
       <primitive object={cuadro} scale={0.01} position={[0, 0, 0]} />
       <primitive
@@ -298,7 +320,6 @@ fbx.traverse((child) => {
       <primitive object={mesa} scale={0.01} position={[0, 0, 0]} />
       <primitive object={parquet} scale={0.01} position={[0, 0, 0]} />
       <primitive object={silla} scale={0.01} position={[0, 0, 0]} />
-      {/* <primitive object={suelo_habitacion} scale={0.01} position={[0, 0, 0]} /> */}
       <primitive object={sueloyparedes} scale={0.01} position={[0, 0, 0]} />
       <primitive object={sugetar_estanteria} scale={0.01} position={[0, 0, 0]} />
       <primitive object={sujetar_poster} scale={0.01} position={[0, 0, 0]} />
@@ -316,7 +337,7 @@ fbx.traverse((child) => {
       {luzEncendida && (
         <pointLight
           position={posicionLuzPrincipal}
-          intensity={0.9}
+          intensity={1.9}
           distance={2}
           decay={2}
           color="white"
@@ -407,8 +428,8 @@ function App() {
   return (
     <div style={{ margin: 0, padding: 0, overflow: 'hidden', height: '100vh', width: '100%' }}>
       <Canvas style={{ width: '100%', height: '100%' }} camera={{ position: [0, 2, 5], fov: 60 }}>
-        <ambientLight intensity={0.8} />
-        <directionalLight position={[5, 10, 5]} />
+        <ambientLight intensity={1.05} />
+        <directionalLight position={[15, 10, 5]} />
         <Suspense fallback={null}>
           <Modelo />
         </Suspense>
