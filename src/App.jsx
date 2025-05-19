@@ -21,7 +21,7 @@ function Modelo() {
   const libro2 = useLoader(FBXLoader, '/source/librosql.fbx');
   const librotumando = useLoader(FBXLoader, '/source/librotumado.fbx');
   const mesa = useLoader(FBXLoader, '/source/mesa.fbx');
-  const parquet = useLoader(FBXLoader, '/source/parquet.fbx');
+  const parquet = useLoader(FBXLoader, '/source/suelodemadera.fbx');
   const silla = useLoader(FBXLoader, '/source/silla.fbx');
   const sueloyparedes = useLoader(FBXLoader, '/source/sueloyparedes.fbx');
   const sugetar_estanteria = useLoader(FBXLoader, '/source/sugetar_estanteria.fbx');
@@ -44,7 +44,7 @@ function Modelo() {
   const posterTxt = useLoader(TextureLoader, '/textures/textura_poster.png');
   const suelo_texture = useLoader(TextureLoader, '/textures/suelo_habitacion.png');
   const textura_angular = useLoader(TextureLoader, '/textures/textura_angular.png');
-  const textura_armario = useLoader(TextureLoader, '/textures/textura_estanteria.png');
+  const textura_armario = useLoader(TextureLoader, '/textures/parquet.png');
   const textura_estanteria = useLoader(TextureLoader, '/textures/textura_estanteria.png');
   const textura_mysql = useLoader(TextureLoader, '/textures/textura_mysql.png');
   const textura_php = useLoader(TextureLoader, '/textures/textura_php.png');
