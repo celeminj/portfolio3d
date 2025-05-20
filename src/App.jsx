@@ -1,7 +1,7 @@
 import React, { Suspense, useEffect, useRef, useState } from 'react';
 import { Canvas, useLoader, useFrame } from '@react-three/fiber';
 import { TextureLoader } from 'three';
-import { OrbitControls, Html } from '@react-three/drei';
+import { OrbitControls, Html,Bounds  } from '@react-three/drei';
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
 import * as THREE from 'three';
 
@@ -29,7 +29,14 @@ function Modelo() {
   const sw = useLoader(FBXLoader, '/source/sw.fbx');
   const visualcodeicon = useLoader(FBXLoader, '/source/visualcodeicon.fbx');
   const lampara = useLoader(FBXLoader, '/source/luces.fbx');
-
+  const cama_madera = useLoader(FBXLoader, '/source/cama_madera.fbx');
+  const almohada = useLoader(FBXLoader, '/source/almohada.fbx');
+  const colchon = useLoader(FBXLoader, '/source/colchon.fbx');
+  const cortina = useLoader(FBXLoader, '/source/cortina.fbx');
+  const manta = useLoader(FBXLoader, '/source/manta.fbx');
+  const libros_abajo = useLoader(FBXLoader, '/source/libros_abjao.fbx');
+  const libros_arriba = useLoader(FBXLoader, '/source/libros_arriba.fbx');
+  const libros_medio = useLoader(FBXLoader, '/source/libros_medio.fbx');
 
   const texture = useLoader(TextureLoader, '/textures/textura_armario.png');
   const texture2 = useLoader(TextureLoader, '/textures/frank.png');
@@ -64,6 +71,56 @@ function Modelo() {
   const pinkFloydRef = useRef();
 
   useEffect(() => {
+    libros_medio.traverse((child) => { 
+      if (child.isMesh) {
+        child.material.map = textura_php;
+        child.material.needsUpdate = true;
+      }
+    });
+    libros_arriba.traverse((child) => {
+      if (child.isMesh) { 
+        child.material.map = textura_php;
+        child.material.needsUpdate = true;
+      }
+    });
+    libros_abajo.traverse((child) => { 
+      if (child.isMesh) {
+        child.material.map = textura_angular;
+        child.material.needsUpdate = true;
+      }
+    });
+    cama_madera.traverse((child) => {
+      if (child.isMesh) { 
+        child.material.map = textura_armario;
+        child.material.needsUpdate = true;
+      }
+    });
+    almohada.traverse((child) => {
+      if (child.isMesh) {
+        child.material.map = textura_armario;
+        child.material.needsUpdate = true;
+      }
+    });
+    colchon.traverse((child) => {
+      if (child.isMesh) {
+        child.material.map = gris;
+        child.material.needsUpdate = true;
+      }
+    });
+    cortina.traverse((child) => {
+      if (child.isMesh) {
+        child.material.map = gris;
+        child.material.needsUpdate = true;
+      }
+    });
+    manta.traverse((child) => {
+      if (child.isMesh) {
+        child.material.map = gris;
+        child.material.needsUpdate = true;
+      }
+
+    });
+
     visualcodeicon.traverse((child) => {
       if (child.isMesh) {
         child.material.map = blue;
@@ -256,7 +313,6 @@ function Modelo() {
   return (
     <>
       <primitive object={fbx} scale={0.01} />
-      <primitive object={lampara} scale={0.01} position={[0, 0, 0]} />
       <primitive object={fbxpc} scale={0.01} position={[0, 0, 0]} />
       <primitive object={cuadro} scale={0.01} position={[0, 0, 0]} />
       <primitive
@@ -312,7 +368,11 @@ function Modelo() {
         onPointerOut={() => setHovered(false)}
       />
 
-      {/* Añado los FBX restantes aquí */}
+      <primitive object={lampara} scale={0.01} position={[0, 0, 0]} />
+      <primitive object={cama_madera} scale={0.01} position={[0, 0, 0]} />
+      <primitive object={libros_abajo} scale={0.01} position={[0, 0, 0]} />
+      <primitive object={cortina} scale={0.01} position={[0, 0, 0]} />
+      <primitive object={manta} scale={0.01} position={[0, 0, 0]} />
       <primitive object={estanteria_alargada} scale={0.01} position={[0, 0, 0]} />
       <primitive object={estanteria} scale={0.01} position={[0, 0, 0]} />
       <primitive object={libro2} scale={0.01} position={[0, 0, 0]} />
@@ -324,7 +384,8 @@ function Modelo() {
       <primitive object={sugetar_estanteria} scale={0.01} position={[0, 0, 0]} />
       <primitive object={sujetar_poster} scale={0.01} position={[0, 0, 0]} />
       <primitive object={sw} scale={0.01} position={[0, 0, 0]} />
-      
+      <primitive object={libros_arriba} scale={0.01} position={[0, 0, 0]} />
+      <primitive object={libros_medio} scale={0.01} position={[0, 0, 0]} />
       <primitive 
         object={visualcodeicon} 
         scale={0.01} 
@@ -403,7 +464,6 @@ function Modelo() {
   );
 }
 
-// ... (el resto de tu código se mantiene igual)
 
 const popupHtmlStyle = {
   background: 'rgba(0,0,0,0.85)',
@@ -426,12 +486,22 @@ const buttonStyle = {
 
 function App() {
   return (
-    <div style={{ margin: 0, padding: 0, overflow: 'hidden', height: '100vh', width: '100%' }}>
-      <Canvas style={{ width: '100%', height: '100%' }} camera={{ position: [0, 2, 5], fov: 60 }}>
-        <ambientLight intensity={1.05} />
-        <directionalLight position={[15, 10, 5]} />
+    <div
+      style={{
+        margin: 0,
+        padding: 0,
+        overflow: "hidden",
+        height: "100vh",
+        width: "100%",
+      }}
+    >
+      <Canvas shadows camera={{ position: [0, 1, 3], fov: 50 }}>
+        <ambientLight intensity={0.5} />
+        <directionalLight position={[10, 10, 10]} intensity={1} castShadow />
         <Suspense fallback={null}>
-          <Modelo />
+          <Bounds fit clip observe margin={1.2}>
+            <Modelo />
+          </Bounds>
         </Suspense>
         <OrbitControls />
       </Canvas>
