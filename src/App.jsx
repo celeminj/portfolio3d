@@ -30,13 +30,15 @@ function Modelo() {
   const visualcodeicon = useLoader(FBXLoader, '/source/visualcodeicon.fbx');
   const lampara = useLoader(FBXLoader, '/source/luces.fbx');
   const cama_madera = useLoader(FBXLoader, '/source/cama_madera.fbx');
-  const almohada = useLoader(FBXLoader, '/source/almohada.fbx');
   const colchon = useLoader(FBXLoader, '/source/colchon.fbx');
   const cortina = useLoader(FBXLoader, '/source/cortina.fbx');
   const manta = useLoader(FBXLoader, '/source/manta.fbx');
   const libros_abajo = useLoader(FBXLoader, '/source/libros_abjao.fbx');
   const libros_arriba = useLoader(FBXLoader, '/source/libros_arriba.fbx');
   const libros_medio = useLoader(FBXLoader, '/source/libros_medio.fbx');
+  const almohada = useLoader(FBXLoader, '/source/almohada.fbx');
+
+
 
   const texture = useLoader(TextureLoader, '/textures/textura_armario.png');
   const texture2 = useLoader(TextureLoader, '/textures/frank.png');
@@ -95,18 +97,8 @@ function Modelo() {
         child.material.needsUpdate = true;
       }
     });
-    almohada.traverse((child) => {
-      if (child.isMesh) {
-        child.material.map = textura_armario;
-        child.material.needsUpdate = true;
-      }
-    });
-    colchon.traverse((child) => {
-      if (child.isMesh) {
-        child.material.map = gris;
-        child.material.needsUpdate = true;
-      }
-    });
+
+   
     cortina.traverse((child) => {
       if (child.isMesh) {
         child.material.map = gris;
@@ -254,7 +246,7 @@ function Modelo() {
     }
     );
   }, [
-    fbx, fbxpc, cuadro, discoSade, discoPinkFloyd, github, pc, linkedin, poster, lampara,
+    fbx, fbxpc, cuadro, discoSade, discoPinkFloyd, github, pc, linkedin, poster, lampara,almohada,colchon,
     texture, texture2, texture3, textureSade, texturePinkFloyd, textureGithub, texturePC, textureLinkedin, texturePoster
   ]);
 
@@ -369,6 +361,8 @@ function Modelo() {
       />
 
       <primitive object={lampara} scale={0.01} position={[0, 0, 0]} />
+      <primitive object={almohada} scale={0.01} position={[0, 0, 0]} />
+      <primitive object={colchon} scale={0.01} position={[0, 0, 0]} />
       <primitive object={cama_madera} scale={0.01} position={[0, 0, 0]} />
       <primitive object={libros_abajo} scale={0.01} position={[0, 0, 0]} />
       <primitive object={cortina} scale={0.01} position={[0, 0, 0]} />
