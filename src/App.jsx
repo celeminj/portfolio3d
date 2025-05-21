@@ -469,7 +469,7 @@ const popupHtmlStyle = {
 };
 
 const buttonStyle = {
-  marginTop: '10px',
+  marginTop: '9px',
   padding: '8px 16px',
   backgroundColor: '#ff4b4b',
   border: 'none',
