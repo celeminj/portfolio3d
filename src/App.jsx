@@ -37,7 +37,7 @@ function Modelo() {
   const libros_arriba = useLoader(FBXLoader, '/source/libros_arriba.fbx');
   const libros_medio = useLoader(FBXLoader, '/source/libros_medio.fbx');
   const almohada = useLoader(FBXLoader, '/source/almohada.fbx');
-
+  const vinilo = useLoader(FBXLoader, '/source/Vinilo.fbx');
 
 
   const texture = useLoader(TextureLoader, '/textures/textura_armario.png');
@@ -59,6 +59,7 @@ function Modelo() {
   const textura_php = useLoader(TextureLoader, '/textures/textura_php.png');
   const gris = useLoader(TextureLoader, '/textures/gris.jpg');
   const blue = useLoader(TextureLoader, '/textures/blue.jpg');
+  const vinilo_texture = useLoader(TextureLoader, '/textures/vinilo.png');
   const [hovered, setHovered] = useState(false);
   const [luzEncendida, setLuzEncendida] = useState(true);
   const [luzSecundariaEncendida, setLuzSecundariaEncendida] = useState(true);
@@ -73,6 +74,13 @@ function Modelo() {
   const pinkFloydRef = useRef();
 
   useEffect(() => {
+    vinilo.traverse((child) => {
+      if (child.isMesh) {
+        child.material.map = vinilo_texture;
+        child.material.needsUpdate = true;
+      }
+    });
+
     libros_medio.traverse((child) => { 
       if (child.isMesh) {
         child.material.map = textura_php;
@@ -246,7 +254,7 @@ function Modelo() {
     }
     );
   }, [
-    fbx, fbxpc, cuadro, discoSade, discoPinkFloyd, github, pc, linkedin, poster, lampara,almohada,colchon,
+    fbx, fbxpc, cuadro, discoSade, discoPinkFloyd, github, pc, linkedin, poster, lampara,almohada,colchon,vinilo,
     texture, texture2, texture3, textureSade, texturePinkFloyd, textureGithub, texturePC, textureLinkedin, texturePoster
   ]);
 
@@ -307,6 +315,7 @@ function Modelo() {
       <primitive object={fbx} scale={0.01} />
       <primitive object={fbxpc} scale={0.01} position={[0, 0, 0]} />
       <primitive object={cuadro} scale={0.01} position={[0, 0, 0]} />
+      <primitive object={vinilo} scale={0.01} position={[0, 0, 0]} />
       <primitive
         object={poster}
         scale={0.01}
