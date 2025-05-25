@@ -1,11 +1,12 @@
 import React, { Suspense, useEffect, useRef, useState } from 'react';
 import { Canvas, useLoader, useFrame } from '@react-three/fiber';
 import { TextureLoader } from 'three';
-import { OrbitControls, Html,Bounds  } from '@react-three/drei';
+import { OrbitControls, Html, Bounds, useProgress } from '@react-three/drei';
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
 import * as THREE from 'three';
+import Loader from './Loader';
 
-function Modelo() {
+function Modelo({ onLoaded, setProgress }) {
   const fbx = useLoader(FBXLoader, '/source/armario.fbx');
   const fbxpc = useLoader(FBXLoader, '/source/cuadro1.fbx');
   const cuadro = useLoader(FBXLoader, '/source/cuadro2.fbx');
@@ -37,7 +38,6 @@ function Modelo() {
   const libros_arriba = useLoader(FBXLoader, '/source/libros_arriba.fbx');
   const libros_medio = useLoader(FBXLoader, '/source/libros_medio.fbx');
   const almohada = useLoader(FBXLoader, '/source/almohada.fbx');
-  const vinilo = useLoader(FBXLoader, '/source/Vinilo.fbx');
 
 
   const texture = useLoader(TextureLoader, '/textures/textura_armario.png');
@@ -59,7 +59,6 @@ function Modelo() {
   const textura_php = useLoader(TextureLoader, '/textures/textura_php.png');
   const gris = useLoader(TextureLoader, '/textures/gris.jpg');
   const blue = useLoader(TextureLoader, '/textures/blue.jpg');
-  const vinilo_texture = useLoader(TextureLoader, '/textures/vinilo.png');
   const [hovered, setHovered] = useState(false);
   const [luzEncendida, setLuzEncendida] = useState(true);
   const [luzSecundariaEncendida, setLuzSecundariaEncendida] = useState(true);
@@ -74,13 +73,6 @@ function Modelo() {
   const pinkFloydRef = useRef();
 
   useEffect(() => {
-    vinilo.traverse((child) => {
-      if (child.isMesh) {
-        child.material.map = vinilo_texture;
-        child.material.needsUpdate = true;
-      }
-    });
-
     libros_medio.traverse((child) => { 
       if (child.isMesh) {
         child.material.map = textura_php;
@@ -254,7 +246,7 @@ function Modelo() {
     }
     );
   }, [
-    fbx, fbxpc, cuadro, discoSade, discoPinkFloyd, github, pc, linkedin, poster, lampara,almohada,colchon,vinilo,
+    fbx, fbxpc, cuadro, discoSade, discoPinkFloyd, github, pc, linkedin, poster, lampara,almohada,colchon,
     texture, texture2, texture3, textureSade, texturePinkFloyd, textureGithub, texturePC, textureLinkedin, texturePoster
   ]);
 
@@ -309,13 +301,11 @@ function Modelo() {
   const posicionLuzPrincipal = [2.75, 1.10, -0.15];
   const posicionLuzSecundaria = [0.45, 1.1, -0.55];
 
-
   return (
     <>
       <primitive object={fbx} scale={0.01} />
       <primitive object={fbxpc} scale={0.01} position={[0, 0, 0]} />
       <primitive object={cuadro} scale={0.01} position={[0, 0, 0]} />
-      <primitive object={vinilo} scale={0.01} position={[0, 0, 0]} />
       <primitive
         object={poster}
         scale={0.01}
@@ -467,7 +457,6 @@ function Modelo() {
   );
 }
 
-
 const popupHtmlStyle = {
   background: 'rgba(0,0,0,0.85)',
   padding: '20px',
@@ -486,27 +475,42 @@ const buttonStyle = {
   color: 'white',
   cursor: 'pointer',
 };
-
 function App() {
+  const { progress } = useProgress();
+  const [loading, setLoading] = useState(true);
+  const controlsRef = useRef();
+
+  useEffect(() => {
+    if (progress === 100) {
+      setTimeout(() => setLoading(false), 500);
+    }
+  }, [progress]);
+
+  // Ajusta el target de la cámara después de cargar
+  useEffect(() => {
+    if (!loading && controlsRef.current) {
+      controlsRef.current.target.set(1.8, 1, 0); // Ajusta el valor Y según tu modelo
+      controlsRef.current.update();
+    }
+  }, [loading]);
+
   return (
-    <div
-      style={{
-        margin: 0,
-        padding: 0,
-        overflow: "hidden",
-        height: "100vh",
-        width: "100%",
-      }}
-    >
-      <Canvas shadows camera={{ position: [0, 1, 3], fov: 50 }}>
+    <div style={{
+      margin: 0,
+      padding: 0,
+      overflow: "hidden",
+      height: "100vh",
+      width: "100%",
+      position: 'relative'
+    }}>
+      {loading && <Loader progress={progress} />}
+      <Canvas shadows camera={{ position: [-2, 2, 8], fov: 20 }}>
         <ambientLight intensity={0.5} />
         <directionalLight position={[10, 10, 10]} intensity={1} castShadow />
         <Suspense fallback={null}>
-          <Bounds fit clip observe margin={1.2}>
             <Modelo />
-          </Bounds>
         </Suspense>
-        <OrbitControls />
+        <OrbitControls ref={controlsRef} target={[8,4,0]} />
       </Canvas>
     </div>
   );
